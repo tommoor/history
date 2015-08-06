@@ -47,7 +47,7 @@ function createHashHistory(options={}) {
   if (queryKey === undefined || !!queryKey)
     queryKey = typeof queryKey === 'string' ? queryKey : DefaultQueryKey;
 
-  function getCurrentLocation() {
+  function getCurrentLocation(callback) {
     var path = getHashPath();
     
     var key, state;
@@ -57,7 +57,9 @@ function createHashHistory(options={}) {
       state = key && readState(key);
     }
 
-    return createLocation(path, state, undefined, key);
+    callback(
+      createLocation(path, state, undefined, key)
+    );
   }
 
   function startHashChangeListener({ transitionTo }) {
@@ -65,9 +67,7 @@ function createHashHistory(options={}) {
       if (!ensureSlash())
         return; // Always make sure hashes are preceeded with a /.
 
-      transitionTo(
-        getCurrentLocation()
-      );
+      getCurrentLocation(transitionTo);
     };
 
     ensureSlash();

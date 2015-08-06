@@ -5,14 +5,16 @@ import { addEventListener, removeEventListener, readState, saveState, getWindowP
 import createDOMHistory from './createDOMHistory';
 import createLocation from './createLocation';
 
-function getCurrentLocation(historyState) {
+function getCurrentLocation(callback, historyState) {
   historyState = historyState || window.history.state || {};
 
   var { key } = historyState;
   var state = key && readState(key);
   var path = getWindowPath();
 
-  return createLocation(path, state, undefined, key);
+  callback(
+    createLocation(path, state, undefined, key)
+  );
 }
 
 function startPopStateListener({ transitionTo }) {
@@ -20,9 +22,7 @@ function startPopStateListener({ transitionTo }) {
     if (event.state === undefined)
       return; // Ignore extraneous popstate events in WebKit.
 
-    transitionTo(
-      getCurrentLocation(event.state)
-    );
+    getCurrentLocation(transitionTo, event.state);
   }
 
   addEventListener(window, 'popstate', popStateListener);

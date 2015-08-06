@@ -71,12 +71,14 @@ function createMemoryHistory(options={}) {
     return storage[key];
   }
 
-  function getCurrentLocation() {
+  function getCurrentLocation(callback) {
     var { key, pathname, search } = entries[current];
     var path = pathname + (search || '');
     var state = readState(key);
 
-    return createLocation(path, state, undefined, key);
+    callback(
+      createLocation(path, state, undefined, key)
+    );
   }
 
   function canGo(n) {
@@ -94,10 +96,10 @@ function createMemoryHistory(options={}) {
 
       current += n;
 
-      var currentLocation = getCurrentLocation();
-
-      // change action to POP
-      history.transitionTo({ ...currentLocation, action: POP });
+      getCurrentLocation(function (location) {
+        // change action to POP
+        history.transitionTo({ ...location, action: POP });
+      });
     }
   }
 
@@ -108,9 +110,8 @@ function createMemoryHistory(options={}) {
 
         // if we are not on the top of stack
         // remove rest and push new
-        if (current < (entries.length - 1)) {
+        if (current < (entries.length - 1))
           entries.splice(current);
-        }
 
         entries.push(location);
         saveState(location.key, location.state);

@@ -49,7 +49,7 @@ function createHistory(options={}) {
     if (location) {
       listener(location);
     } else {
-      updateLocation(getCurrentLocation());
+      getCurrentLocation(updateLocation);
     }
 
     return function () {
