@@ -82,6 +82,7 @@ const createMemoryHistory = (options = {}) => {
     getCurrentLocation,
     pushLocation,
     replaceLocation,
+    canGo,
     go
   })
 
